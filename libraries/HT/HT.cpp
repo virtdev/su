@@ -1,21 +1,9 @@
-/*      HT.cpp (Humidity and Temperature)
+/* HT.cpp (Humidity and Temperature)
  *
- *      Copyright (C) 2014  Yanpeng Li <lyp40293@gmail.com>
+ * Copyright (C) 2014 Yanpeng Li
+ * Copyright (C) 2016 Yi-Wei Ci
  *
- *      This program is free software; you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation; either version 2 of the License, or
- *      (at your option) any later version.
- *
- *      This program is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
- *
- *      You should have received a copy of the GNU General Public License
- *      along with this program; if not, write to the Free Software
- *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- *      MA 02110-1301, USA.
+ * Distributed under the terms of the MIT license.
  */
 
 #include "HT.h"
@@ -24,7 +12,7 @@ HT::HT(int pin):Driver(pin, "HT", MODE_POLL | MODE_SYNC | MODE_VISI | MODE_OUT, 
 {
 }
 
-void HT::getSpec(String &spec) 
+void HT::getSpec(String &spec)
 {
 	itemSpec(spec, "humidity", "%", "int", "[0, 100]");
 	itemSpecNext(spec, "temperature", "Celsius", "int", "[-100, 100]");

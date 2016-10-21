@@ -8,7 +8,7 @@ The configuration file is as follows:
 
 Example:
 Add two devices HT(DHT11) and LED.
-
+```c
 #include <Pin.h>
 #include <LED.h>
 #include <Controller.h>
@@ -31,12 +31,14 @@ void setup() {
 void loop() {
   ctrl.proc();
 }
-
+```
 
 The definition of pin is as follows:
 * libraries/Pin/Pin.h
+```c
 #define PIN_HT			12
-#define PIN_LED			9
+#define PIN_LED		9
+```
 
 # License
 SU is released under the terms of the MIT License.

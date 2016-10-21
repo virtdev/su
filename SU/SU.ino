@@ -21,4 +21,3 @@ void setup() {
 void loop() {
   ctrl.proc();
 }
-

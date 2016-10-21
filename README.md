@@ -36,7 +36,7 @@ void loop() {
 The definition of pin is as follows:
 * libraries/Pin/Pin.h
 ```c
-#define PIN_HT			12
+#define PIN_HT		12
 #define PIN_LED		9
 ```
 

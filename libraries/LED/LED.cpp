@@ -20,18 +20,21 @@
 
 #include "LED.h"
 
+LED::LED(int pin):Driver(pin, "LED", MODE_VISI | MODE_SWITCH, 0)
+{
+}
+
 void LED::setup()
 {
-	set("LED", MODE_VISI | MODE_SWITCH, "", 0);
-	pinMode(getPin(), OUTPUT);
+	pinMode(m_pin, OUTPUT);
 }
 
 void LED::open()
 {
-	digitalWrite(getPin(), HIGH);
+	digitalWrite(m_pin, HIGH);
 }
 
 void LED::close()
 {
-	digitalWrite(getPin(), LOW);
+	digitalWrite(m_pin, LOW);
 }

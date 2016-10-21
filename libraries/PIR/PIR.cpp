@@ -20,38 +20,50 @@
 
 #include "PIR.h"
 
+PIR::PIR(int pin):Driver(pin, "PIR", MODE_VISI | MODE_TRIG, 0)
+{
+	m_start = 0;
+	m_detect = 0;
+}
+
 void PIR::setup()
 {
-	item_t range = itemNew("Enable", itemRange("False", "True"));
-	
-	set("PIR", MODE_VISI | MODE_TRIG, range, 0);
-	pinMode(getIndex(), INPUT);
-	m_detect = 0;
-	m_start = 0;
+	pinMode(m_pin, INPUT);	
+}
+
+void PIR::getSpec(String &spec)
+{
+	itemSpec(spec, "enable", NULL, NULL, NULL);
 }
 
 int PIR::get(char *buf, size_t size)
 {
+	unsigned long t;
 	const int interval = 20;
-	unsigned long time = millis();
 
-	if (time - m_start < interval)
-		return 0;
-
-	m_start = time;
-	if(HIGH == digitalRead(getPin())) {
-		if (!m_detect) {
-			item_t res = itemNew("Enable", "True");
-			
-			m_detect = true;
-			return itemCopy(res, buf, size);
-		}
-	} else {
-		if (m_detect) {
-			item_t res = itemNew("Enable", "False");
-			
-			m_detect =false;
-			return itemCopy(res, buf, size);
+	if (0 == m_start)
+		m_start = millis();
+	
+	t = millis();
+	if (m_start > t)
+		m_start = t;
+	
+	if (t - m_start >= interval) {
+		m_start = t;
+		if(HIGH == digitalRead(m_pin)) {
+			if (!m_detect) {
+				item_t res = itemNew("enable", "true");
+				
+				m_detect = true;
+				return itemCopy(res, buf, size);
+			}
+		} else {
+			if (m_detect) {
+				item_t res = itemNew("enable", "false");
+				
+				m_detect =false;
+				return itemCopy(res, buf, size);
+			}
 		}
 	}
 	return 0;

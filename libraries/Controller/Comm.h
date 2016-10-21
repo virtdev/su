@@ -3,15 +3,15 @@
 
 #include <string.h>
 
-#define COMM_DLE 	'@'
-#define COMM_STX 	'0'
-#define COMM_ETX 	'1'
-#define COMM_CHR 	"@@"
-#define COMM_HEAD 	"@0"
-#define COMM_TAIL 	"@1"
+#define COMM_DLE	'@'
+#define COMM_STX	'0'
+#define COMM_ETX	'1'
+#define COMM_CHR	"@@"
+#define COMM_HEAD	"@0"
+#define COMM_TAIL	"@1"
 
-#define COMM_TIMEOUT	100
-#define COMM_RATE		9600
+#define COMM_RATE	9600
+#define COMM_TIMEOUT 100
 
 const int COMM_HEAD_LEN = strlen(COMM_HEAD);
 const int COMM_TAIL_LEN = strlen(COMM_TAIL);

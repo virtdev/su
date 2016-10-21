@@ -6,10 +6,11 @@
 class Dust: public Driver
 {
 public:
-	Dust(int pin):Driver(pin) {}
+	Dust(int pin);
 	
 public:
 	void setup();
+	void getSpec(String &spec);
 	int get(char *buf, size_t size);
 
 private:

@@ -20,7 +20,7 @@
 
 #include "USD.h"
 
-USD::USD(int pinTrig, int pinEcho):Driver(pinTrig)
+USD::USD(int pinTrig, int pinEcho):Driver(pinTrig, "USD", MODE_VISI | MODE_TRIG, 0)
 {
 	m_cnt = 0;
 	m_hits = 0;
@@ -30,12 +30,14 @@ USD::USD(int pinTrig, int pinEcho):Driver(pinTrig)
 }
 
 void USD::setup()
-{
-	item_t range = itemNew("Enable", itemRange("False", "True"));
-	
-	set("USD", MODE_VISI | MODE_TRIG, range, 0);
-	pinMode(m_pinTrig, OUTPUT);
+{	
 	pinMode(m_pinEcho, INPUT);
+	pinMode(m_pinTrig, OUTPUT);
+}
+
+void USD::getSpec(String &spec)
+{
+	itemSpec(spec, "enable", NULL, NULL, NULL);
 }
 
 bool USD::check()
@@ -58,35 +60,40 @@ bool USD::check()
 
 int USD::get(char *buf, size_t size)
 {
+	unsigned long t;
 	const int hits = 10;
 	const int total = 25;
 	const int interval = 20;
-	unsigned long time = millis();
 
-	if (time - m_start < interval)
-		return false;
-
-	m_start = time;
-	if (m_cnt > 0)
-		m_cnt++;
-
-	if (check()) {
-		if (0 == m_cnt) {
-			m_cnt = 1;
-			m_hits = 1;
-			enableNotifier();
-		} else
-			m_hits++;
-	} 
-	else if (!m_cnt)
-		disableNotifier();
-
-	if (m_cnt == total) {
-		m_cnt = 0;
-		if (m_hits >= hits) {
-			item_t res = itemNew("Enable", "True");
+	if (0 == m_start)
+		m_start = millis();
 	
-			return itemCopy(res, buf, size);
+	t = millis();
+	if (m_start > t)
+		m_start = t;
+
+	if (t - m_start >= interval) {
+		m_start = t;
+		if (m_cnt > 0)
+			m_cnt++;
+
+		if (check()) {
+			if (0 == m_cnt) {
+				m_cnt = 1;
+				m_hits = 1;
+				enableNotifier();
+			} else
+				m_hits++;
+		} else if (!m_cnt)
+			disableNotifier();
+
+		if (m_cnt == total) {
+			m_cnt = 0;
+			if (m_hits >= hits) {
+				item_t res = itemNew("enable", "true");
+		
+				return itemCopy(res, buf, size);
+			}
 		}
 	}
     return 0;

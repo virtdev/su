@@ -10,6 +10,7 @@ public:
 
 public:
 	void setup();
+	void getSpec(String &spec);
 	int get(char *buf, size_t size);
 
 private:

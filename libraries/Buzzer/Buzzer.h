@@ -6,7 +6,7 @@
 class Buzzer: public Driver
 {
 public:
-	Buzzer(int pin):Driver(pin) {}
+	Buzzer(int pin);
 
 public:
 	void open();

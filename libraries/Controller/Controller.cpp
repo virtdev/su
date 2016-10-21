@@ -42,7 +42,7 @@ int Controller::add(Driver *device)
 {
 	if (m_total == DEVICE_MAX)
 		return -1;
-	
+
 	m_devices[m_total] = device;
 	m_total++;
 	return 0;
@@ -52,11 +52,11 @@ void Controller::reply(Driver *device, size_t len)
 {
 	if (len > 0) {
 		int size = BUF_SIZE - m_len;
-		item_t key = itemKey(device->getIndex());
-		
+		item_t key = itemKey(device->m_index);
+
 		if (key.length() + len + 4 > size)
 			return;
-		
+
 		m_reply[key.length() + len + 2] = '}';
 		m_reply[key.length() + len + 3] = '}';
 		m_comm.put(m_reply, key.length() + len + 4);
@@ -64,16 +64,16 @@ void Controller::reply(Driver *device, size_t len)
 		m_comm.put(m_reply, 0);
 }
 
-char *Controller::getReplyBuf(Driver *device)
+char *Controller::getReply(Driver *device)
 {
 	int len;
 	int size = BUF_SIZE - m_len;
-	int index = device->getIndex();
+	int index = device->m_index;
 	item_t key = itemKey(index);
-	
+
 	if (key.length() + 4 >= size)
 		return NULL;
-	
+
 	m_reply[0] = '{';
 	key.toCharArray(&m_reply[1], size - 2);
 	len = 1 + key.length();
@@ -81,10 +81,10 @@ char *Controller::getReplyBuf(Driver *device)
 	return &m_reply[len + 1];
 }
 
-const size_t Controller::getReplyBufSize(Driver *device)
+const size_t Controller::getReplySize(Driver *device)
 {
-	item_t key = itemKey(device->getIndex());
-	
+	item_t key = itemKey(device->m_index);
+
 	return BUF_SIZE - 4 - key.length();
 }
 
@@ -94,47 +94,77 @@ int Controller::getRequest(req_t *req)
 		return -1;
 
 	memcpy(&req->index, &m_buf[CRC_SIZE], 4);
-	memcpy(&req->flags, &m_buf[CRC_SIZE + 4], 4);
+	memcpy(&req->cmd, &m_buf[CRC_SIZE + 4], 4);
 	req->buf = &m_buf[CRC_SIZE + REQ_HEAD_SIZE];
 	req->len = m_len - REQ_HEAD_SIZE - CRC_SIZE;
 	return 0;
 }
 
-void Controller::sendDeviceInfo()
+int Controller::getProfile(Driver *device, char *buf, int size)
 {
+	int len;
+	String s;
+	String spec;
+
+	s = String("{'type':'") + device->m_name + "', 'mode':" + String(device->m_mode);
+	if (s.length() >= size)
+		return 0;
+	s.toCharArray(buf, size);
+	len = s.length();
+	device->getSpec(spec);
+	if (spec.length() > 0) {
+		s = String(", 'spec':{") + spec + "}";
+		if (s.length() + len >= size)
+			return 0;
+		s.toCharArray(&buf[len], size - len);
+		len += s.length();
+	}
+	if (device->m_freq > 0) {
+		s = String(", 'freq':") + String(device->m_freq);
+		if (s.length() + len >= size)
+			return 0;
+		s.toCharArray(&buf[len], size - len);
+		len += s.length();
+	}
+	buf[len] = '}';
+	return len + 1;
+}
+
+void Controller::sendProfile()
+{
+	int len;
 	int index;
 	item_t key;
-	int len = 1;
-	int sz_info;
+	int cnt = 1;
 	int size = BUF_SIZE - m_len;
-	
+
 	m_reply[0] = '{';
 	if (m_total > 0) {
-		index = m_devices[0]->getIndex();
+		index = m_devices[0]->m_index;
 		key = itemKey(index);
-		if (key.length() + len >= size)
+		if (key.length() + cnt >= size)
 			return;
-		key.toCharArray(&m_reply[len], size - len);
-		len += key.length();
-		sz_info = m_devices[0]->getInfo(&m_reply[len], size - len);
-		if (0 == sz_info)
+		key.toCharArray(&m_reply[cnt], size - cnt);
+		cnt += key.length();
+		len = getProfile(m_devices[0], &m_reply[cnt], size - cnt);
+		if (0 == len)
 			return;
-		len += sz_info;
+		cnt += len;
 		for (int i = 1; i < m_total; i++) {
-			index = m_devices[i]->getIndex();
+			index = m_devices[i]->m_index;
 			key = itemKeyNext(index);
-			if (key.length() + len >= size)
+			if (key.length() + cnt >= size)
 				return;
-			key.toCharArray(&m_reply[len], size - len);
-			len += key.length();
-			sz_info = m_devices[i]->getInfo(&m_reply[len], size - len);
-			if (0 == sz_info)
+			key.toCharArray(&m_reply[cnt], size - cnt);
+			cnt += key.length();
+			len = getProfile(m_devices[i], &m_reply[cnt], size - cnt);
+			if (0 == len)
 				return;
-			len += sz_info;
+			cnt += len;
 		}
 	}
-	m_reply[len] = '}';
-	m_comm.put(m_reply, len + 1);
+	m_reply[cnt] = '}';
+	m_comm.put(m_reply, cnt + 1);
 }
 
 void Controller::mount(req_t *req)
@@ -143,8 +173,8 @@ void Controller::mount(req_t *req)
 
 	if (strncmp(req->buf, REQ_SECRET, strlen(REQ_SECRET)))
 		return;
-	
-	sendDeviceInfo();
+
+	sendProfile();
 	m_mount = true;
 }
 
@@ -160,17 +190,17 @@ int Controller::receive()
 		return -1;
 }
 
-void Controller::checkEvent()
+void Controller::procEvent()
 {
 	if(!m_mount)
 		return;
-	
+
 	for (int i = 0; i < m_total; i++) {
 		Driver *device = m_devices[i];
-		
-		if (device->getMode() & MODE_TRIG) {
-			int len = device->get(getReplyBuf(device), getReplyBufSize(device));
-		
+
+		if (device->m_mode & MODE_TRIG) {
+			int len = device->get(getReply(device), getReplySize(device));
+
 			if (len > 0)
 				reply(device, len);
 		}
@@ -180,12 +210,12 @@ void Controller::checkEvent()
 Driver *Controller::find(int index)
 {
 	for (int i = 0; i < m_total; i++)
-		if (m_devices[i]->getIndex() == index)
+		if (m_devices[i]->m_index == index)
 			return m_devices[i];
 	return NULL;
 }
 
-void Controller::checkReq()
+void Controller::procReq()
 {
 	int len;
 	req_t req;
@@ -193,15 +223,15 @@ void Controller::checkReq()
 
 	if (receive() < 0)
 		return;
-	
+
 	if (getRequest(&req) < 0)
 		return;
-	
-	if (req.flags & REQ_MOUNT) {
+
+	if (req.cmd & REQ_MOUNT) {
 		mount(&req);
 		return;
 	}
-	
+
 	if(!m_mount)
 		return;
 
@@ -209,21 +239,21 @@ void Controller::checkReq()
 	if (!device)
 		return;
 
-	if (req.flags & REQ_OPEN) {
+	if (req.cmd & REQ_OPEN) {
     	device->open();
-	} else if (req.flags & REQ_GET) {
-		len = device->get(getReplyBuf(device), getReplyBufSize(device));
+	} else if (req.cmd & REQ_GET) {
+		len = device->get(getReply(device), getReplySize(device));
 		reply(device, len);
-	} else if (req.flags & REQ_PUT) {
-		len = device->put(req.buf, req.len, getReplyBuf(device), getReplyBufSize(device));
+	} else if (req.cmd & REQ_PUT) {
+		len = device->put(req.buf, req.len, getReply(device), getReplySize(device));
 		reply(device, len);
-	} else if (req.flags & REQ_CLOSE) {
+	} else if (req.cmd & REQ_CLOSE) {
 		device->close();
 	}
 }
 
 void Controller::proc()
 {
-	checkReq();
-	checkEvent();
+	procReq();
+	procEvent();
 }

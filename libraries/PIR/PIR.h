@@ -6,10 +6,11 @@
 class PIR: public Driver
 {
 public:
-	PIR(int pin):Driver(pin) {}
+	PIR(int pin);
 
 public:
 	void setup();
+	void getSpec(String &spec);
 	int get(char *buf, size_t size);
 
 private:

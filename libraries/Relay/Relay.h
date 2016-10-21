@@ -6,7 +6,7 @@
 class Relay: public Driver
 {
 public:
-	Relay(int pin):Driver(pin) {}
+	Relay(int pin);
 
 public:
 	void open();

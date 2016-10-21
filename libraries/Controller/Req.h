@@ -13,7 +13,7 @@
 typedef struct request {
 	int len;
 	int index;
-	int flags;
+	int cmd;
 	char *buf;
 } req_t;
 

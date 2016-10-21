@@ -6,10 +6,11 @@
 class IRD: public Driver
 {
 public:
-	IRD(int pin):Driver(pin) {}
+	IRD(int pin);
 
 public:
 	void setup();
+	void getSpec(String &spec);
 	int get(char *buf, size_t size);
 
 private:

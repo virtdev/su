@@ -6,8 +6,8 @@
 #include "Comm.h"
 #include "../Driver/Driver.h"
 
-#define DEVICE_MAX 		4
-#define BUF_SIZE 		350
+#define BUF_SIZE 		320
+#define DEVICE_MAX 		2
 
 class Controller
 {
@@ -19,15 +19,16 @@ public:
 
 private:
 	int receive();
-	void checkReq();
-	void checkEvent();
-	void sendDeviceInfo();
+	void procReq();
+	void procEvent();
+	void sendProfile();
 	void mount(req_t *req);
 	Driver *find(int index);
 	int getRequest(req_t *req);
-	char *getReplyBuf(Driver *device);
+	char *getReply(Driver *device);
 	void reply(Driver *device, size_t len);
-	const size_t getReplyBufSize(Driver *device);
+	const size_t getReplySize(Driver *device);
+	int getProfile(Driver *device, char *buf, int size);
 
 private:
 	int m_len;

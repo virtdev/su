@@ -20,20 +20,21 @@
 
 #include "Buzzer.h"
 
+Buzzer::Buzzer(int pin):Driver(pin, "Buzzer", MODE_VISI | MODE_SWITCH, 0)
+{	
+}
+
 void Buzzer::setup()
 {
-	item_t range = itemNew("Enable", itemRange("False", "True"));
-	
-	set("Buzzer", MODE_VISI | MODE_SWITCH, range, 0);
-	pinMode(getPin(), OUTPUT);
+	pinMode(m_pin, OUTPUT);
 }
 
 void Buzzer::open()
 {
-	tone(getPin(), 5000);
+	tone(m_pin, 5000);
 }
 
 void Buzzer::close()
 {
-	noTone(getPin());
+	noTone(m_pin);
 }

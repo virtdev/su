@@ -20,20 +20,22 @@
 
 #include "Relay.h"
 
+Relay::Relay(int pin):Driver(pin, "Relay", MODE_VISI | MODE_SWITCH, 0)
+{
+}
+
 void Relay::setup()
 {
-	item_t range = itemNew("Enable", itemRange("False", "True"));
-	
-	set("Relay", MODE_VISI | MODE_SWITCH, range, 0);
-	pinMode(getIndex(), OUTPUT);
+	pinMode(m_pin, OUTPUT);
+	digitalWrite(m_pin, HIGH);
 }
 
 void Relay::open()
 {
-	digitalWrite(getIndex(), HIGH);
+	digitalWrite(m_pin, LOW);
 }
 
 void Relay::close()
 {
-	digitalWrite(getIndex(), LOW);
+	digitalWrite(m_pin, HIGH);
 }

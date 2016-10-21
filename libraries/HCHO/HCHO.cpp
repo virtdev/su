@@ -20,18 +20,24 @@
 
 #include "HCHO.h"
 
+HCHO::HCHO(int pin):Driver(pin, "HCHO", MODE_POLL | MODE_SYNC | MODE_VISI | MODE_OUT, 0.01)
+{
+}
+
 void HCHO::setup()
 {
-	item_t range = itemNew("PPM", itemRange(0, 4095));
-	
-	set("HCHO", MODE_POLL | MODE_SYNC | MODE_VISI | MODE_OUT, range, 0.01);
+	pinMode(m_pin, INPUT);	
+}
+
+void HCHO::getSpec(String &spec)
+{
+	itemSpec(spec, "hcho", "PPM", "int", "[0, 4096]");
 }
 
 int HCHO::get(char *buf, size_t size)
 {
-	item_t res;
-	int val = analogRead(getPin());
-
-	res = itemNew("PPM", String(val));
+	int val = analogRead(m_pin);
+	item_t res = itemNew("hcho", String(val));
+	
 	return itemCopy(res, buf, size);
 }

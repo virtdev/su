@@ -6,7 +6,7 @@
 class LED: public Driver
 {
 public:
-	LED(int pin):Driver(pin) {}
+	LED(int pin);
 
 public:
 	void open();

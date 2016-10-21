@@ -20,11 +20,14 @@
 
 #include "HT.h"
 
-void HT::setup()
+HT::HT(int pin):Driver(pin, "HT", MODE_POLL | MODE_SYNC | MODE_VISI | MODE_OUT, 0.01)
 {
-	item_t range = itemNew("Humidity", itemRange(0, 100)) + itemNext("Celsius", itemRange(-100, 100));
-	
-	set("HT", MODE_POLL | MODE_SYNC | MODE_VISI | MODE_OUT, range, 0.01);
+}
+
+void HT::getSpec(String &spec) 
+{
+	itemSpec(spec, "humidity", "%", "int", "[0, 100]");
+	itemSpecNext(spec, "temperature", "Celsius", "int", "[-100, 100]");
 }
 
 int HT::get(char *buf, size_t size)
@@ -38,33 +41,33 @@ int HT::get(char *buf, size_t size)
 	for(int i = 0; i < 5; i++)
 		data[i] = 0;
 
-	pinMode(getIndex(), OUTPUT);
-	digitalWrite(getPin(), LOW);
+	pinMode(m_pin, OUTPUT);
+	digitalWrite(m_pin, LOW);
 	delay(18);
-	digitalWrite(getPin(), HIGH);
+	digitalWrite(m_pin, HIGH);
 	delayMicroseconds(40);
-	pinMode(getPin(), INPUT);
+	pinMode(m_pin, INPUT);
 
 	loopCnt = 10000;
-	while(digitalRead(getPin()) == LOW)
+	while(digitalRead(m_pin) == LOW)
 		if (loopCnt-- == 0)
 			return 0;
 
 	loopCnt = 10000;
-	while(digitalRead(getPin()) == HIGH)
+	while(digitalRead(m_pin) == HIGH)
 		if (loopCnt-- == 0)
 			return 0;
 
 	for(int bits = 0; bits < 40; bits++) {
 		loopCnt = 10000;
-		while(digitalRead(getPin()) == LOW)
+		while(digitalRead(m_pin) == LOW)
 			if (loopCnt-- == 0)
 				return 0;
 
 		unsigned long t = micros();
 
 		loopCnt = 10000;
-		while(digitalRead(getPin()) == HIGH)
+		while(digitalRead(m_pin) == HIGH)
 			if (loopCnt-- == 0)
 				return 0;
 
@@ -79,13 +82,13 @@ int HT::get(char *buf, size_t size)
 	}
 
 	delayMicroseconds(100);
-	pinMode(getPin(), OUTPUT);
-	digitalWrite(getPin(), HIGH);
+	pinMode(m_pin, OUTPUT);
+	digitalWrite(m_pin, HIGH);
 
 	if(data[4] != data[0] + data[2])
 		return 0;
 
-	res = itemNew("Humidity", String(data[0]));
-	res += itemNext("Celsius", String(data[2]));
+	res = itemNew("humidity", String(data[0]));
+	res += itemNext("temperature", String(data[2]));
 	return itemCopy(res, buf, size);
 }

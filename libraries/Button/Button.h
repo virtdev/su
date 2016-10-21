@@ -6,10 +6,11 @@
 class Button: public Driver
 {
 public:
-	Button(int pin):Driver(pin) {}
+	Button(int pin);
 
 public:
 	void setup();
+	void getSpec(String &spec);
 	int get(char *buf, size_t size);
 
 private:

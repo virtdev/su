@@ -1,10 +1,10 @@
 /*
  * Derived from CRC algorithm for JTAG ICE mkII
  */
- 
+
 #include "CRC.h"
 #include "Arduino.h"
- 
+
 static const unsigned short crc_table[256] = {
   0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
   0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
@@ -43,10 +43,10 @@ static const unsigned short crc_table[256] = {
 crc_t CRC::encode(char *buf, int length)
 {
   int i;
-	crc_t crc = 0;
-	
-	for (i = 0; i < length; i++)
-		crc = crc_update(crc, buf[i]);
+    crc_t crc = 0;
 
-	return crc;
+    for (i = 0; i < length; i++)
+        crc = crc_update(crc, buf[i]);
+
+    return crc;
 }

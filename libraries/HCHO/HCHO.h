@@ -6,12 +6,12 @@
 class HCHO: public Driver
 {
 public:
-	HCHO(int pin);
+    HCHO(int pin);
 
 public:
-	void setup();
-	void getSpec(String &spec);
-	int get(char *buf, size_t size);
+    void setup();
+    void getSpec(String &spec);
+    int get(char *buf, size_t size);
 };
 
 #endif

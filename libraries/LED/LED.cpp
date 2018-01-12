@@ -14,15 +14,15 @@ LED::LED(int pin):Driver(pin, "LED", MODE_VISI | MODE_SWITCH, 0)
 
 void LED::setup()
 {
-	pinMode(m_pin, OUTPUT);
+    pinMode(m_pin, OUTPUT);
 }
 
 void LED::open()
 {
-	digitalWrite(m_pin, HIGH);
+    digitalWrite(m_pin, HIGH);
 }
 
 void LED::close()
 {
-	digitalWrite(m_pin, LOW);
+    digitalWrite(m_pin, LOW);
 }

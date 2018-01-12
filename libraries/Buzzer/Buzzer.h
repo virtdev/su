@@ -6,12 +6,12 @@
 class Buzzer: public Driver
 {
 public:
-	Buzzer(int pin);
+    Buzzer(int pin);
 
 public:
-	void open();
-	void close();
-	void setup();
+    void open();
+    void close();
+    void setup();
 };
 
 #endif

@@ -6,12 +6,12 @@
 class LED: public Driver
 {
 public:
-	LED(int pin);
+    LED(int pin);
 
 public:
-	void open();
-	void close();
-	void setup();
+    void open();
+    void close();
+    void setup();
 };
 
 #endif

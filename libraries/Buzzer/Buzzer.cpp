@@ -14,15 +14,15 @@ Buzzer::Buzzer(int pin):Driver(pin, "Buzzer", MODE_VISI | MODE_SWITCH, 0)
 
 void Buzzer::setup()
 {
-	pinMode(m_pin, OUTPUT);
+    pinMode(m_pin, OUTPUT);
 }
 
 void Buzzer::open()
 {
-	tone(m_pin, 5000);
+    tone(m_pin, 5000);
 }
 
 void Buzzer::close()
 {
-	noTone(m_pin);
+    noTone(m_pin);
 }

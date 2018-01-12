@@ -14,18 +14,18 @@ HCHO::HCHO(int pin):Driver(pin, "HCHO", MODE_POLL | MODE_SYNC | MODE_VISI | MODE
 
 void HCHO::setup()
 {
-	pinMode(m_pin, INPUT);
+    pinMode(m_pin, INPUT);
 }
 
 void HCHO::getSpec(String &spec)
 {
-	itemSpec(spec, "hcho", "PPM", "int", "[0, 4096]");
+    itemSpec(spec, "hcho", "PPM", "int", "[0, 4096]");
 }
 
 int HCHO::get(char *buf, size_t size)
 {
-	int val = analogRead(m_pin);
-	item_t res = itemNew("hcho", String(val));
+    int val = analogRead(m_pin);
+    item_t res = itemNew("hcho", String(val));
 
-	return itemCopy(res, buf, size);
+    return itemCopy(res, buf, size);
 }

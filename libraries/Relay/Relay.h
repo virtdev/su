@@ -6,12 +6,12 @@
 class Relay: public Driver
 {
 public:
-	Relay(int pin);
+    Relay(int pin);
 
 public:
-	void open();
-	void close();
-	void setup();
+    void open();
+    void close();
+    void setup();
 };
 
 #endif

@@ -9,7 +9,7 @@ typedef unsigned short crc_t;
 class CRC
 {
 public:
-	crc_t encode(char *buf, int length);
+    crc_t encode(char *buf, int length);
 };
 
 #endif

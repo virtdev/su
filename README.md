@@ -19,17 +19,17 @@ HT ht = HT(PIN_HT);
 LED led = LED(PIN_LED);
 
 void create() {
-  ctrl.add(&ht);
-  ctrl.add(&led);
+	ctrl.add(&ht);
+	ctrl.add(&led);
 }
 
 void setup() {
-  create();
-  ctrl.setup();
+	create();
+	ctrl.setup();
 }
 
 void loop() {
-  ctrl.proc();
+	ctrl.proc();
 }
 ```
 

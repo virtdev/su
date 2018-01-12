@@ -6,11 +6,11 @@
 class HT: public Driver
 {
 public:
-	HT(int pin);
+    HT(int pin);
 
 public:
-	void getSpec(String &spec);
-	int get(char *buf, size_t size);
+    void getSpec(String &spec);
+    int get(char *buf, size_t size);
 };
 
 #endif

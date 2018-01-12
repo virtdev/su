@@ -6,17 +6,17 @@
 class Dust: public Driver
 {
 public:
-	Dust(int pin);
-	
+    Dust(int pin);
+
 public:
-	void setup();
-	void getSpec(String &spec);
-	int get(char *buf, size_t size);
+    void setup();
+    void getSpec(String &spec);
+    int get(char *buf, size_t size);
 
 private:
-	int m_result;
-	unsigned long m_start;
-	unsigned long m_occupancy;
+    int m_result;
+    unsigned long m_start;
+    unsigned long m_occupancy;
 };
 
 #endif

@@ -6,16 +6,16 @@
 class Button: public Driver
 {
 public:
-	Button(int pin);
+    Button(int pin);
 
 public:
-	void setup();
-	void getSpec(String &spec);
-	int get(char *buf, size_t size);
+    void setup();
+    void getSpec(String &spec);
+    int get(char *buf, size_t size);
 
 private:
-	bool m_down;
-	unsigned long m_start;
+    bool m_down;
+    unsigned long m_start;
 };
 
 #endif

@@ -14,16 +14,16 @@ Relay::Relay(int pin):Driver(pin, "Relay", MODE_VISI | MODE_SWITCH, 0)
 
 void Relay::setup()
 {
-	pinMode(m_pin, OUTPUT);
-	digitalWrite(m_pin, HIGH);
+    pinMode(m_pin, OUTPUT);
+    digitalWrite(m_pin, HIGH);
 }
 
 void Relay::open()
 {
-	digitalWrite(m_pin, LOW);
+    digitalWrite(m_pin, LOW);
 }
 
 void Relay::close()
 {
-	digitalWrite(m_pin, HIGH);
+    digitalWrite(m_pin, HIGH);
 }
